@@ -29,7 +29,6 @@ conversation = []
 model = "meta-llama/Llama-2-7b-chat-hf"
 
 tokenizer = AutoTokenizer.from_pretrained(model)
-token="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"
 pipeline = transformers.pipeline(
     "text-generation",
     model=model,
