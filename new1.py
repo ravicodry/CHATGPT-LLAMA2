@@ -9,18 +9,18 @@ torch.cuda.empty_cache()
 #from transformers import set_token
 import streamlit as st
 
-api_token = st.text_input("Enter your Hugging Face API Token:", type="password")
-
-# Create a button to submit the token and run Hugging Face CLI
-if st.button("Run Hugging Face CLI"):
-    # Check if the user entered a token
-    if api_token:
-        # Set the HUGGINGFACE_TOKEN environment variable with the provided token
-        # This allows the Hugging Face CLI to authenticate API requests
-        subprocess.run(["transformers-cli", "login", f"--api_key {api_token}"])
-        st.success("Hugging Face CLI is authenticated with the provided API Token.")
+with st.sidebar:
+    st.title('🦙💬 Llama 2 Chatbot')
+    if 'REPLICATE_API_TOKEN' in st.secrets:
+        st.success('API key already provided!', icon='✅')
+        HUGGINGFACEHUB_API_TOKEN = st.secrets['REPLICATE_API_TOKEN']
     else:
-        st.warning("Please enter an API Token.")
+        HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Replicate API token:', type='password')
+        if not (HUGGINGFACEHUB_API_TOKEN.startswith('hf_') and len(HUGGINGFACEHUB_API_TOKEN)==40):
+            st.warning('Please enter your credentials!', icon='⚠️')
+        else:
+            st.success('Proceed to entering your prompt message!', icon='👉')
+    os.environ['REPLICATE_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
 st.title("Chatbot App")
 user_input = st.text_input("")
 # Set your Hugging Face API token
