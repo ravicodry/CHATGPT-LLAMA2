@@ -9,49 +9,71 @@ torch.cuda.empty_cache()
 #from transformers import set_token
 import streamlit as st
 
+token = "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"
+token = os.getenv(token)
+
+
+# Now you can use 'token' in your application to authenticate with Hugging Face.
+
+
+with st.sidebar:
+    st.title('🦙💬 Llama 2 Chatbot')
+    if 'HUGGINGFACEHUB_API_TOKEN' in st.secrets:
+        st.success('API key already provided!', icon='✅')
+        HUGGINGFACEHUB_API_TOKEN = st.secrets['HUGGINGFACEHUB_API_TOKEN']
+    else:
+        HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Hugging API token:', type='password')
+        if not (HUGGINGFACEHUB_API_TOKEN.startswith('hf_') and len(HUGGINGFACEHUB_API_TOKEN)==40):
+            st.warning('Please enter your credentials!', icon='⚠️')
+        else:
+            st.success('Proceed to entering your prompt message!', icon='👉')
+    os.environ['HUGGINGFACEHUB_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
+#def main():
 # with st.sidebar:
-#     st.title('🦙💬 Llama 2 Chatbot')
-#     if 'HUGGINGFACEHUB_API_TOKEN' in st.secrets:
-#         st.success('API key already provided!', icon='✅')
-#         HUGGINGFACEHUB_API_TOKEN = st.secrets['HUGGINGFACEHUB_API_TOKEN']
+# st.title('🦙💬 Llama 2 Chatbot')
+# if 'HUGGINGFACEHUB_API_TOKEN' in st.secrets:
+#     st.success('API key already provided!', icon='✅')
+#     HUGGINGFACEHUB_API_TOKEN = st.secrets['HUGGINGFACEHUB_API_TOKEN']
+# else:
+#     HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Hugging API token:', type='password')
+#     if not (HUGGINGFACEHUB_API_TOKEN.startswith('hf_') and len(HUGGINGFACEHUB_API_TOKEN)==40):
+#         st.warning('Please enter your credentials!', icon='⚠️')
 #     else:
-#         HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Hugging API token:', type='password')
-#         if not (HUGGINGFACEHUB_API_TOKEN.startswith('hf_') and len(HUGGINGFACEHUB_API_TOKEN)==40):
-#             st.warning('Please enter your credentials!', icon='⚠️')
-#         else:
-#             st.success('Proceed to entering your prompt message!', icon='👉')
-#     os.environ['HUGGINGFACEHUB_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
-def main():
-  
-    st.title("Chatbot App")
-    user_input = st.text_input("")
-    # Set your Hugging Face API token
-    #set_token("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")
-    conversation = []
-    model = "meta-llama/Llama-2-7b-chat-hf"
+#         st.success('Proceed to entering your prompt message!', icon='👉')
+# os.environ['HUGGINGFACEHUB_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
+import requests
 
-    tokenizer = AutoTokenizer.from_pretrained(model)
-    pipeline = transformers.pipeline(
-        "text-generation",
-        model=model,
-        torch_dtype=torch.float16,
-        device_map="auto",
-    )
-    if user_input:
+#token = "<your_token>"  # Replace with your actual token
+headers = {"Authorization": f"Bearer {token}"}
 
-        conversation.append(f"{user_input}")
-        sequences = pipeline(
-            " ".join(conversation),
-            do_sample=True,
-            top_k=10,
-            num_return_sequences=1,
-            eos_token_id=tokenizer.eos_token_id,
-            max_length=50,
-    )
-    # for seq in sequences:
-    #     print(f"Result: {seq['generated_text']}")
-    st.write(sequences)
+# Make an API request with the headers
+response = requests.get("https://huggingface.co/meta-llama/Llama-2-7b-chat-hf", headers=headers)
 
-if __name__ == "__main__":
+st.title("Chatbot App")
+user_input = st.text_input("")
+# Set your Hugging Face API token
+#set_token("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")
+conversation = []
+model = "meta-llama/Llama-2-7b-chat-hf"
 
-  main()
+tokenizer = AutoTokenizer.from_pretrained(model,token=token)
+pipeline = transformers.pipeline(
+    "text-generation",
+    model=model,
+    torch_dtype=torch.float16,
+    device_map="auto",
+)
+if user_input:
+
+    conversation.append(f"{user_input}")
+    sequences = pipeline(
+        " ".join(conversation),
+        do_sample=True,
+        top_k=10,
+        num_return_sequences=1,
+        eos_token_id=tokenizer.eos_token_id,
+        max_length=50,
+)
+# for seq in sequences:
+#     print(f"Result: {seq['generated_text']}")
+st.write(sequences)
