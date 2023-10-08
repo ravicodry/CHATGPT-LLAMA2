@@ -2,7 +2,8 @@ from transformers import AutoTokenizer
 import transformers
 import torch
 import os
-
+from dotenv import load_dotenv
+load_dotenv()
 torch.cuda.empty_cache()
 #from transformers import set_token
 import streamlit as st
