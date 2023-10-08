@@ -11,16 +11,16 @@ import streamlit as st
 
 with st.sidebar:
     st.title('🦙💬 Llama 2 Chatbot')
-    if 'REPLICATE_API_TOKEN' in st.secrets:
+    if 'HUGGINGFACEHUB_API_TOKEN' in st.secrets:
         st.success('API key already provided!', icon='✅')
-        HUGGINGFACEHUB_API_TOKEN = st.secrets['REPLICATE_API_TOKEN']
+        HUGGINGFACEHUB_API_TOKEN = st.secrets['HUGGINGFACEHUB_API_TOKEN']
     else:
-        HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Replicate API token:', type='password')
+        HUGGINGFACEHUB_API_TOKEN = st.text_input('Enter Hugging API token:', type='password')
         if not (HUGGINGFACEHUB_API_TOKEN.startswith('hf_') and len(HUGGINGFACEHUB_API_TOKEN)==40):
             st.warning('Please enter your credentials!', icon='⚠️')
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
-    os.environ['REPLICATE_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
+    os.environ['HUGGINGFACEHUB_API_TOKEN'] = HUGGINGFACEHUB_API_TOKEN
 st.title("Chatbot App")
 user_input = st.text_input("")
 # Set your Hugging Face API token
